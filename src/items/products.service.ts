@@ -32,7 +32,7 @@ export class ProductsService {
 
         await browser.close();
 
-        return price
+        return parseFloat(price)
     }
 
     private getReadableName(url: string): string {
