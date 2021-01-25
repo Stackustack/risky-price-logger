@@ -6,33 +6,49 @@ import { CreateProductDto } from './dto/create-product.dto';
 export class ProductsService {
     async watchProduct(createProductDto: CreateProductDto) {
         const { url } = createProductDto 
-
-        const price = await this.fetchPrice(url)
+        const { price, pictureUrl } = await this.fetchPriceAndPicture(url)
         const productName = this.getReadableName(url)
+
+        // TODO 1: add product to DB (if its not there yet) - THIS MODULE, IN REPOSITORY
+        //              productRepository.addProduct(url, name, picture)
 
         // TODO 1: add product to DB (if its not there yet)
         // TODO 2: add priceLog for product
 
         return ({
+            productName,
             price,
-            productName
+            pictureUrl
         })
 
     }
 
-    private async fetchPrice(url: string): Promise<number> {
+    private async fetchPriceAndPicture(url: string): Promise<{price: number, pictureUrl: string}> {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
 
         await page.goto(url);
 
         const price = await page.evaluate(() => {
-            return document.querySelector(".ty-product-block__price-actual .ty-price-update .ty-price bdi .ty-price-num:first-of-type").textContent
+            return document
+                .querySelector(".ty-product-block__price-actual .ty-price-update .ty-price bdi .ty-price-num:first-of-type")
+                .textContent
         });
+
+        const pictureUrl = await page.evaluate(() => {
+            return document
+                .querySelector('[class="owl-item active"]  img[class="ty-pict     cm-image"]')
+                .getAttribute('src')
+        })
 
         await browser.close();
 
-        return parseFloat(price)
+        const obj = {
+            price: parseFloat(price),
+            pictureUrl
+        }
+
+        return obj
     }
 
     getReadableName(url: string): string {
