@@ -13,18 +13,16 @@ describe('ProductsService', () => {
     })
 
     describe('getReadableName', () => {
-        it('returns correct name', async () => {
-            const result = 'Pure long sleeve art blue'
-            const url = 'https://www.shop.com/en/clothes-category/blouses/pure-long-sleeve-art-blue'
+        const result = 'Pure long sleeve art blue'
+        const url = 'https://www.shop.com/en/clothes-category/blouses/pure-long-sleeve-art-blue'
+        const urlWithSlash = url + '/'
 
+        it('returns correct name', async () => {
             expect(await productsService.getReadableName(url)).toBe(result)
         })
 
         it('removes slash at the end of url', async () => {
-            const result = 'Pure long sleeve art blue'
-            const url = 'https://www.shop.com/en/clothes-category/blouses/pure-long-sleeve-art-blue/' 
-
-            expect(await productsService.getReadableName(url)).toBe(result)
+            expect(await productsService.getReadableName(urlWithSlash)).toBe(result)
         })
     })
 });
