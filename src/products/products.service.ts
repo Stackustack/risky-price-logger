@@ -1,26 +1,30 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as puppeteer from 'puppeteer';
 import { CreateProductDto } from './dto/create-product.dto';
+import { ProductRepository } from './product.repository';
 
 @Injectable()
 export class ProductsService {
+    constructor(
+        @InjectRepository(ProductRepository)
+        private productRepository: ProductRepository
+    ) {}
     async watchProduct(createProductDto: CreateProductDto) {
         const { url } = createProductDto 
         const { price, pictureUrl } = await this.fetchPriceAndPicture(url)
         const productName = this.getReadableName(url)
 
+        const product = await this.productRepository.add(url, productName, pictureUrl)
         // TODO 1: add product to DB (if its not there yet) - THIS MODULE, IN REPOSITORY
         //              productRepository.addProduct(url, name, picture)
+        // TODO 2: add priceLog to DB
+        //          in priceLog service add method to that
+        //          this.addPriceLog(productId, price, timestamp)
+        //              - this runs repository method to save that to DB
 
-        // TODO 1: add product to DB (if its not there yet)
-        // TODO 2: add priceLog for product
 
-        return ({
-            productName,
-            price,
-            pictureUrl
-        })
-
+        return product
     }
 
     private async fetchPriceAndPicture(url: string): Promise<{price: number, pictureUrl: string}> {
