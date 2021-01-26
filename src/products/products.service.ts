@@ -11,6 +11,10 @@ export class ProductsService {
         private productRepository: ProductRepository
     ) {}
 
+    async findAll() {
+        return this.productRepository.findAll()
+    }
+
     async watchProduct(createProductDto: CreateProductDto): Promise<{
         url: string,
         name: string,

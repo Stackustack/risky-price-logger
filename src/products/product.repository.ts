@@ -4,6 +4,11 @@ import { Product } from './product.entity';
 
 @EntityRepository(Product)
 export class ProductRepository extends Repository<Product> {
+    async findAll() {
+        const results = await this.find()
+        return results
+    }
+    
     async add(url, name, pictureUrl) {
         let product = new Product()
         product.url = url

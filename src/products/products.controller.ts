@@ -10,7 +10,7 @@ export class ProductsController {
 
     @Get()
     getProduct() {
-        // #TODO: GET /items
+        return this.productsService.findAll()
     }
 
     @Delete('/:uuid')
