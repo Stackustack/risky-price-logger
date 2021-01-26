@@ -10,7 +10,13 @@ export class ProductsService {
         @InjectRepository(ProductRepository)
         private productRepository: ProductRepository
     ) {}
-    async watchProduct(createProductDto: CreateProductDto) {
+
+    async watchProduct(createProductDto: CreateProductDto): Promise<{
+        url: string,
+        name: string,
+        pictureUrl: string,
+        id: string,
+    }> {
         const { url } = createProductDto 
         const { price, pictureUrl } = await this.fetchPriceAndPicture(url)
         const productName = this.getReadableName(url)
@@ -25,6 +31,10 @@ export class ProductsService {
 
 
         return product
+    }
+
+    async deleteProduct(uuid: string) {
+        return this.productRepository.deleteProduct(uuid)
     }
 
     private async fetchPriceAndPicture(url: string): Promise<{price: number, pictureUrl: string}> {

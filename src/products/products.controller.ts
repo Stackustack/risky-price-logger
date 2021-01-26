@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, ValidationPipe } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductsService } from './products.service';
 
@@ -11,6 +11,13 @@ export class ProductsController {
     @Get()
     getProduct() {
         // #TODO: GET /items
+    }
+
+    @Delete('/:uuid')
+    deleteProductById(
+        @Param('uuid') uuid: string 
+    ) {
+        return this.productsService.deleteProduct(uuid)
     }
 
     @Post()
