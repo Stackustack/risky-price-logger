@@ -9,8 +9,15 @@ export class ProductsController {
     ) {}
 
     @Get()
-    getProduct() {
+    getProducts() {
         return this.productsService.findAll()
+    }
+
+    @Get('/:id')
+    getProductById(
+        @Param('id') id: string
+    ) {
+        return this.productsService.findById(id)
     }
 
     @Delete('/:uuid')

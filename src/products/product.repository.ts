@@ -8,8 +8,16 @@ export class ProductRepository extends Repository<Product> {
         const results = await this.find()
         return results
     }
+
+    async findById(id) {
+        const result = await this.findOne({ id })
+        
+        return result
+    }
     
-    async add(url, name, pictureUrl) {
+    async add(url, name, pictureUrl): Promise<Product> {
+
+
         let product = new Product()
         product.url = url
         product.name = name

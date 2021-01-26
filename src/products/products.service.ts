@@ -15,6 +15,10 @@ export class ProductsService {
         return this.productRepository.findAll()
     }
 
+    async findById(id) {
+        return this.productRepository.findById(id)
+    }
+
     async watchProduct(createProductDto: CreateProductDto): Promise<{
         url: string,
         name: string,
