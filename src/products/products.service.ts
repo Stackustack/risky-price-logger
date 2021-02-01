@@ -3,13 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as puppeteer from 'puppeteer';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductRepository } from './product.repository';
+import { PriceLogsService } from './../price-logs/price-logs.service'
 import { ProductSelectors } from './statics/product.selectors';
 
 @Injectable()
 export class ProductsService {
     constructor(
         @InjectRepository(ProductRepository)
-        private productRepository: ProductRepository
+        private productRepository: ProductRepository,
+        private priceLogService: PriceLogsService
     ) {}
 
     async findAll() {
@@ -21,25 +23,21 @@ export class ProductsService {
     }
 
     async watchProduct(createProductDto: CreateProductDto): Promise<{
-        url: string,
-        name: string,
-        pictureUrl: string,
-        id: string,
+        // url: string,
+        // name: string,
+        // pictureUrl: string,
+        // id: string,
     }> {
         const { url } = createProductDto 
         const { price, pictureUrl } = await this.fetchPriceAndPicture(url)
         const productName = this.getReadableName(url)
-
         const product = await this.productRepository.add(url, productName, pictureUrl)
-        // TODO 1: add product to DB (if its not there yet) - THIS MODULE, IN REPOSITORY
-        //              productRepository.addProduct(url, name, picture)
-        // TODO 2: add priceLog to DB
-        //          in priceLog service add method to that
-        //          this.addPriceLog(productId, price, timestamp)
-        //              - this runs repository method to save that to DB
+        const priceLog = await this.priceLogService.addNewLog(product, price)
 
-
-        return product
+        return ({
+            product,
+            priceLog 
+        })
     }
 
     async deleteProduct(uuid: string) {
