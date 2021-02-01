@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as puppeteer from 'puppeteer';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductRepository } from './product.repository';
+import { ProductSelectors } from './statics/product.selectors';
 
 @Injectable()
 export class ProductsService {
@@ -46,27 +47,28 @@ export class ProductsService {
     }
 
     private async fetchPriceAndPicture(url: string): Promise<{price: number, pictureUrl: string}> {
+        const { PRICE, PICTURE_URL } = ProductSelectors
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
 
         await page.goto(url);
 
-        const price = await page.evaluate(() => {
+        const price = await page.evaluate((PRICE) => {
             return document
-                .querySelector(".ty-product-block__price-actual .ty-price-update .ty-price bdi .ty-price-num:first-of-type")
+                .querySelector(PRICE)
                 .textContent
-        });
+        }, PRICE);
 
-        const pictureUrl = await page.evaluate(() => {
+        const pictureUrl = await page.evaluate((PICTURE_URL) => {
             return document
-                .querySelector('[class="owl-item active"]  img[class="ty-pict     cm-image"]')
+                .querySelector(PICTURE_URL)
                 .getAttribute('src')
-        })
+        }, PICTURE_URL)
 
         await browser.close();
 
         const obj = {
-            price: parseFloat(price),
+            price,
             pictureUrl
         }
 
