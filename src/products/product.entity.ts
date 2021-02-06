@@ -17,6 +17,6 @@ export class Product extends BaseEntity {
     @Column()
     pictureUrl: string;
 
-    @OneToMany(type => PriceLog, priceLog => priceLog.product)
+    @OneToMany(type => PriceLog, priceLog => priceLog.product, {eager: true})
     priceLogs: PriceLog[]
 }
