@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as puppeteer from 'puppeteer';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -29,6 +29,15 @@ export class ProductsService {
         // id: string,
     }> {
         const { url } = createProductDto 
+        const productAlreadyExists = await this.productRepository.findByUrl(url)
+
+        if (productAlreadyExists) {
+            throw new  HttpException({
+                status: HttpStatus.CONFLICT,
+                error: `Resource for url ${url} already exists`
+            }, HttpStatus.CONFLICT)
+        }
+
         const { price, pictureUrl } = await this.fetchPriceAndPicture(url)
         const productName = this.getReadableName(url)
         const product = await this.productRepository.add(url, productName, pictureUrl)
