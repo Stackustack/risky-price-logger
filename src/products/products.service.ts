@@ -49,6 +49,13 @@ export class ProductsService {
         })
     }
 
+    async refreshPrice(productId: string) {
+        const { url } = await this.productRepository.findById(productId)
+        const price = await this.fetchPrice(url)
+
+        return await this.priceLogService.addNewLog(productId, price)
+    }
+
     async deleteProduct(uuid: string) {
         return this.productRepository.deleteProduct(uuid)
     }
@@ -80,6 +87,24 @@ export class ProductsService {
         }
 
         return obj
+    }
+
+    async fetchPrice(url: string) {
+        const { PRICE } = ProductSelectors
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+
+        await page.goto(url);
+
+        const price = await page.evaluate((PRICE) => {
+            return document
+                .querySelector(PRICE)
+                .textContent
+        }, PRICE);
+
+        await browser.close();
+
+        return price
     }
 
     getReadableName(url: string): string {

@@ -14,6 +14,10 @@ export class ProductRepository extends Repository<Product> {
         
         return result
     }
+
+    async findByUrl(url) {
+        return this.findOne({ url })
+    }
     
     async add(url, name, pictureUrl): Promise<Product> {
 
