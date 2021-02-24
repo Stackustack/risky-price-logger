@@ -62,7 +62,7 @@ export class ProductsService {
 
     private async fetchPriceAndPicture(url: string): Promise<{price: number, pictureUrl: string}> {
         const { PRICE, PICTURE_URL } = ProductSelectors
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({args: ['--no-sandbox']});
         const page = await browser.newPage();
 
         await page.goto(url);
@@ -91,7 +91,7 @@ export class ProductsService {
 
     async fetchPrice(url: string) {
         const { PRICE } = ProductSelectors
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({args: ['--no-sandbox']});
         const page = await browser.newPage();
 
         await page.goto(url);
