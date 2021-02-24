@@ -1,0 +1,21 @@
+version: "3.9"
+
+services: 
+  application:
+    image: risky-price-logger:0.24
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/risky-price-logger
+      - /risky-price-logger/node_modules
+    depends_on: 
+      - rpl-db
+  rpl-db:
+    image: postgres
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: riskypricelogger
+    ports:
+      - 5432:5432
+  
