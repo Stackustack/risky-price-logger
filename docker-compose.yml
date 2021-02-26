@@ -2,7 +2,9 @@ version: "3.9"
 
 services: 
   application:
-    image: risky-price-logger:0.24
+    env_file:
+      - .env
+    image: risky-price-logger:0.25
     ports:
       - 3000:3000
     volumes:

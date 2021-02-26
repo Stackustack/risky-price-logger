@@ -1,4 +1,4 @@
-FROM node:12:slim
+FROM node:12-slim
 ENV APP_NAME=/risky-price-logger
 WORKDIR $APP_NAME
 
