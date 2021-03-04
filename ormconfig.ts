@@ -1,5 +1,3 @@
-import { ConnectionOptions, DatabaseType } from 'typeorm'
-
 const {
     DATABASE_HOST,
     DATABASE_PORT,
@@ -8,16 +6,15 @@ const {
     DATABASE_NAME,
   } = process.env;
 
-const postgresDatabase: DatabaseType = 'postgres';
-const connectionOptions: ConnectionOptions = {
-    type: postgresDatabase,
+const config = {
+    type: 'postgres',
     host: DATABASE_HOST,
     port: Number(DATABASE_PORT),
     username: DATABASE_USER,
     password: DATABASE_PASS,
     database: DATABASE_NAME,
-    entities: [__dirname + './../**/*.entity.{js, ts}'],
+    entities: ["dist/**/*.entity{.ts,.js}"],
     synchronize: true,
   };
 
-export = connectionOptions
+module.exports = config;

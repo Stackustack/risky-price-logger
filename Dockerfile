@@ -1,4 +1,4 @@
-FROM node:12-slim
+FROM node:14-slim
 ENV APP_NAME=/risky-price-logger
 WORKDIR $APP_NAME
 
@@ -23,7 +23,7 @@ COPY tsconfig.json ./
 COPY tsconfig.build.json ./
 
 RUN npm install
-COPY . .
+COPY . /risky-price-logger/
 
 EXPOSE 3000
 
