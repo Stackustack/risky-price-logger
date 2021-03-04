@@ -4,7 +4,7 @@ import { Product } from './product.entity';
 
 @EntityRepository(Product)
 export class ProductRepository extends Repository<Product> {
-    async findAll() {
+    async findAll(): Promise<Product[]> {
         const results = await this.find()
         return results
     }

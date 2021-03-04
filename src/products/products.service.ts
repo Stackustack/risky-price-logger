@@ -71,7 +71,7 @@ export class ProductsService {
         return this.productRepository.deleteProduct(uuid)
     }
 
-    private async fetchPriceAndPicture(url: string): Promise<{price: number, pictureUrl: string}> {
+    async fetchPriceAndPicture(url: string): Promise<{price: number, pictureUrl: string}> {
         const { PRICE, PICTURE_URL } = ProductSelectors
         const browser = await puppeteer.launch({args: ['--no-sandbox']});
         const page = await browser.newPage();
