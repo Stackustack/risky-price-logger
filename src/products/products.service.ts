@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as puppeteer from 'puppeteer';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -19,7 +19,13 @@ export class ProductsService {
     }
 
     async findById(id) {
-        return this.productRepository.findById(id)
+        const found = await this.productRepository.findById(id)
+
+        if (!found) {
+            throw new NotFoundException(`Product with ID "${id}" not found`)
+        }
+
+        return found
     }
 
     async watchProduct(createProductDto: CreateProductDto): Promise<{
@@ -32,7 +38,7 @@ export class ProductsService {
         const productAlreadyExists = await this.productRepository.findByUrl(url)
 
         if (productAlreadyExists) {
-            throw new  HttpException({
+            throw new HttpException({
                 status: HttpStatus.CONFLICT,
                 error: `Resource for url ${url} already exists`
             }, HttpStatus.CONFLICT)
@@ -50,8 +56,13 @@ export class ProductsService {
     }
 
     async refreshPrice(productId: string) {
-        const { url } = await this.productRepository.findById(productId)
-        const price = await this.fetchPrice(url)
+        const product = await this.productRepository.findById(productId)
+
+        if (!product) {
+            throw new NotFoundException(`Product with id ${productId} not found`)
+        }
+
+        const price = await this.fetchPrice(product.url)
 
         return await this.priceLogService.addNewLog(productId, price)
     }
