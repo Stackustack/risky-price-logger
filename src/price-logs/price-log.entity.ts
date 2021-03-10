@@ -12,6 +12,6 @@ export class PriceLog extends BaseEntity {
     @Column('date')
     date: Date;
 
-    @ManyToOne(type => Product, product => product.priceLogs)
+    @ManyToOne(type => Product, product => product.priceLogs, { onDelete: 'CASCADE'})
     product: Product
 }
