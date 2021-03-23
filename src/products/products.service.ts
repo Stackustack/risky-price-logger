@@ -5,6 +5,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { ProductRepository } from './product.repository';
 import { PriceLogsService } from './../price-logs/price-logs.service'
 import { ProductSelectors } from './statics/product.selectors';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class ProductsService {
@@ -53,6 +54,42 @@ export class ProductsService {
             product,
             priceLog 
         })
+    }
+
+    @Cron('*/10 * * * * *')
+    async updatePricesForAllProductsCrone() {
+        const { PRICE } = ProductSelectors
+
+        const products = await this.findAll()
+        const prodsArrToUpdate = products.map((el) => {
+            return { id: el.id, url: el.url, newPrice: undefined }
+        })
+
+
+        const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
+
+        const prodsWithNewPrices = await Promise.all(prodsArrToUpdate.map(async product => {
+            let page = await browser.newPage()
+
+            await page.goto(product.url)
+
+            const newPrice = await page.evaluate(PRICE => {
+                return document.querySelector(PRICE).textContent
+            }, PRICE)
+
+            product.newPrice = newPrice
+
+            return {
+                id: product.id,
+                newPrice
+            }
+        }))
+
+        const a = await Promise.all(prodsWithNewPrices.map(async product => {
+            const { id, newPrice } = product
+
+            return this.priceLogService.addNewLog(id, newPrice)
+        }))
     }
 
     async refreshPrice(productId: string) {

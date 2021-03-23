@@ -4,7 +4,7 @@ services:
   application:
     env_file:
       - .env
-    image: risky-price-logger:0.28
+    image: risky-price-logger:0.29
     ports:
       - 3000:3000
     volumes:
