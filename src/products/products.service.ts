@@ -85,6 +85,8 @@ export class ProductsService {
             }
         }))
 
+        await browser.close()
+
         const a = await Promise.all(prodsWithNewPrices.map(async product => {
             const { id, newPrice } = product
 
