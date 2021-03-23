@@ -56,7 +56,7 @@ export class ProductsService {
         })
     }
 
-    @Cron('*/10 * * * *')
+    @Cron('3 3 * * *')
     async updatePricesForAllProductsCrone() {
         const { PRICE } = ProductSelectors
 

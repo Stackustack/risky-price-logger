@@ -57,7 +57,12 @@ docker run -p 3000:3000 risky-price-logger:VERSION_TAG
 $ npm run test
 ```
 
+## Deployment
 
+App setup on Heroku (from web dashboard or CLI)
+- Add `Heroku Postgres DB` Addon and add env vars from Settings page.
+- Add `Heroku Scheduler`. Set it up to run once a day few minutes before your cron job (by default set it to 3:00AM, cronjob wil run at 3:03AM)
+- Add buildpacks for `heroku/nodejs` and `jontewks/puppeteer`
 
 ## License
 
