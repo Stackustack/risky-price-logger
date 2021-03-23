@@ -1,12 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, ParseUUIDPipe, Post, ValidationPipe } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductsService } from './products.service';
 
 @Controller('products')
 export class ProductsController {
+    private readonly logger = new Logger(ProductsController.name)
+
     constructor(
         private productsService: ProductsService
-    ) {}
+    ) { }
 
     @Get()
     getProducts() {
@@ -30,7 +32,7 @@ export class ProductsController {
 
     @Delete('/:uuid')
     deleteProductById(
-        @Param('uuid') uuid: string 
+        @Param('uuid') uuid: string
     ) {
         return this.productsService.deleteProduct(uuid)
     }
@@ -38,7 +40,12 @@ export class ProductsController {
     @Post()
     watchProduct(
         @Body(ValidationPipe) createProductDto: CreateProductDto
-    ) {        
+    ) {
         return this.productsService.watchProduct(createProductDto)
+    }
+
+    @Get('/wakeup')
+    debugHerokuScheduler() {
+        this.logger.log('=== HEROKU SCHEDULER RAN ===')
     }
 }
