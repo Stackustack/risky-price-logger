@@ -13,7 +13,7 @@ export class ProductsService {
         @InjectRepository(ProductRepository)
         private productRepository: ProductRepository,
         private priceLogService: PriceLogsService
-    ) {}
+    ) { }
 
     async findAll() {
         return this.productRepository.findAll()
@@ -35,7 +35,7 @@ export class ProductsService {
         // pictureUrl: string,
         // id: string,
     }> {
-        const { url } = createProductDto 
+        const { url } = createProductDto
         const productAlreadyExists = await this.productRepository.findByUrl(url)
 
         if (productAlreadyExists) {
@@ -52,7 +52,7 @@ export class ProductsService {
 
         return ({
             product,
-            priceLog 
+            priceLog
         })
     }
 
@@ -108,9 +108,9 @@ export class ProductsService {
         return this.productRepository.deleteProduct(uuid)
     }
 
-    async fetchPriceAndPicture(url: string): Promise<{price: number, pictureUrl: string}> {
+    async fetchPriceAndPicture(url: string): Promise<{ price: number, pictureUrl: string }> {
         const { PRICE, PICTURE_URL } = ProductSelectors
-        const browser = await puppeteer.launch({args: ['--no-sandbox']});
+        const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
         const page = await browser.newPage();
 
         await page.goto(url);
@@ -139,7 +139,7 @@ export class ProductsService {
 
     async fetchPrice(url: string) {
         const { PRICE } = ProductSelectors
-        const browser = await puppeteer.launch({args: ['--no-sandbox']});
+        const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
         const page = await browser.newPage();
 
         await page.goto(url);
@@ -158,7 +158,7 @@ export class ProductsService {
     getReadableName(url: string): string {
         if (url.endsWith('/')) {
             url = url.slice(0, -1)
-        } 
+        }
 
         const pathWithoutDashes = url.slice(url.lastIndexOf('/') + 1)
             .replace(/-/g, ' ')
