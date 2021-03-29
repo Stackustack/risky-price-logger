@@ -6,12 +6,12 @@ export class PriceLog extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column('decimal') // stored in GROSZ (1/100 of PLN)
+    @Column() // stored in GROSZ (1/100 of PLN)
     price: number;
 
     @Column('date')
     date: Date;
 
-    @ManyToOne(type => Product, product => product.priceLogs, { onDelete: 'CASCADE'})
+    @ManyToOne(type => Product, product => product.priceLogs, { onDelete: 'CASCADE' })
     product: Product
 }

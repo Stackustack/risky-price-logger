@@ -211,8 +211,9 @@ export class ProductsService {
             return null
         }
 
-        const decimalPoint = price.length - 2
+        const priceStr = price.toString()
+        const decimalPoint = priceStr.length - 2
 
-        return `${price.substring(0, decimalPoint)}.${price.substring(decimalPoint)}`
+        return `${priceStr.substring(0, decimalPoint)}.${priceStr.substring(decimalPoint)}`
     }
 }
