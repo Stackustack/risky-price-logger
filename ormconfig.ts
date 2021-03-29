@@ -6,7 +6,7 @@ const {
   DATABASE_NAME,
 } = process.env;
 
-const config = {
+let config = {
   type: 'postgres',
   host: DATABASE_HOST,
   port: Number(DATABASE_PORT),
@@ -15,9 +15,7 @@ const config = {
   database: DATABASE_NAME,
   entities: ["dist/**/*.entity{.ts,.js}"],
   synchronize: true,
-  ssl: {
-    rejectUnauthorized: false
-  },
+  ssl: (process.env.NODE_ENV == 'development') ? null : { rejectUnauthorized: false }
 };
 
 module.exports = config;
