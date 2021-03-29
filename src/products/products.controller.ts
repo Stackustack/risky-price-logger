@@ -6,7 +6,7 @@ import { ProductsService } from './products.service';
 export class ProductsController {
     constructor(
         private productsService: ProductsService
-    ) {}
+    ) { }
 
     @Get()
     getProducts() {
@@ -30,7 +30,7 @@ export class ProductsController {
 
     @Delete('/:uuid')
     deleteProductById(
-        @Param('uuid') uuid: string 
+        @Param('uuid') uuid: string
     ) {
         return this.productsService.deleteProduct(uuid)
     }
@@ -38,7 +38,7 @@ export class ProductsController {
     @Post()
     watchProduct(
         @Body(ValidationPipe) createProductDto: CreateProductDto
-    ) {        
+    ) {
         return this.productsService.watchProduct(createProductDto)
     }
 }
