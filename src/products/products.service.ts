@@ -168,4 +168,51 @@ export class ProductsService {
 
         return productName
     }
+
+    getNextToLastPriceAndDate(product) {
+        let check = true
+        let i = 0
+        let previousPrice = null
+        let priceChangeDate = null
+
+        const revLogsArr = product.priceLogs.reverse()
+
+        while (check) {
+            if (revLogsArr[i + 1]) {
+                if (revLogsArr[i + 1].price != revLogsArr[i].price) {
+                    check = false
+                    previousPrice = revLogsArr[i + 1].price
+                    priceChangeDate = revLogsArr[i + 1].date
+                } else {
+                    i++
+                }
+            } else {
+                check = false
+            }
+        }
+
+        return { previousPrice, priceChangeDate }
+    }
+
+    calculateDiscount(currentPrice, previousPrice) {
+        if (previousPrice == null) {
+            return null
+        }
+
+        let r = Math.floor((previousPrice - currentPrice) / previousPrice * 100)
+
+        return r >= 0 ?
+            `-${r}%` :
+            `+${Math.abs(r)}%`
+    }
+
+    convPennyToZL(price) {
+        if (price == null) {
+            return null
+        }
+
+        const decimalPoint = price.length - 2
+
+        return `${price.substring(0, decimalPoint)}.${price.substring(decimalPoint)}`
+    }
 }

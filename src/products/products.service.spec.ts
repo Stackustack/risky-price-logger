@@ -48,13 +48,13 @@ describe('ProductsService', () => {
         })
 
     })
-    
+
     describe('findById(id)', () => {
         const product_uuid = uuidv4()
 
         it('calls productRepository.findById and succesfully returns the product', async () => {
-            productRepository.findById.mockResolvedValue('product') 
-            
+            productRepository.findById.mockResolvedValue('product')
+
             expect(productRepository.findById).not.toHaveBeenCalled()
             const result = await productsService.findById(product_uuid)
             expect(productRepository.findById).toHaveBeenCalled()
@@ -64,8 +64,8 @@ describe('ProductsService', () => {
 
         it('throws an error as product is not found', async () => {
             expect(productRepository.findById).not.toHaveBeenCalled()
-            productRepository.findById.mockResolvedValue(undefined) 
-            
+            productRepository.findById.mockResolvedValue(undefined)
+
             await expect(productsService.findById(product_uuid)).rejects.toThrow(NotFoundException)
         })
     })
@@ -75,7 +75,7 @@ describe('ProductsService', () => {
             expect.assertions(2)
             productRepository.findByUrl.mockResolvedValue('foundItem')
             expect(productRepository.findByUrl).not.toHaveBeenCalled()
-            await expect(productsService.watchProduct({url: STATIC_DATA.exampleShopUrl})).rejects.toThrow(HttpException)
+            await expect(productsService.watchProduct({ url: STATIC_DATA.exampleShopUrl })).rejects.toThrow(HttpException)
         })
 
         it('calls for price, picture, name and returns correctly', async () => {
@@ -91,7 +91,7 @@ describe('ProductsService', () => {
             expect(productRepository.add).not.toHaveBeenCalled()
             expect(priceLogsService.addNewLog).not.toHaveBeenCalled()
 
-            await expect(productsService.watchProduct({url: STATIC_DATA.exampleShopUrl})).resolves.toEqual(
+            await expect(productsService.watchProduct({ url: STATIC_DATA.exampleShopUrl })).resolves.toEqual(
                 {
                     product: 'Product object',
                     priceLog: 'PriceLog object'
@@ -146,13 +146,104 @@ describe('ProductsService', () => {
             const result = 'Pure long sleeve art blue'
             const url = 'https://www.shop.com/en/clothes-category/blouses/pure-long-sleeve-art-blue'
             const urlWithSlash = url + '/'
-    
+
             it('returns correct product name from url', async () => {
                 expect(productsService.getReadableName(url)).toBe(result)
             })
-    
+
             it('returns correct product name if url ends with "/"', async () => {
                 expect(productsService.getReadableName(urlWithSlash)).toBe(result)
+            })
+        })
+
+        describe('getNextToLastPriceAndDate(Product)', () => {
+            it('correctly retuns previous price', () => {
+                const mockProduct = {
+                    priceLogs: [{
+                        price: '232323232',
+                        date: '2021-03-23'
+                    }, {
+                        price: '242424',
+                        date: '2021-03-24'
+                    }, {
+                        price: '2525252525',
+                        date: '2021-03-25'
+                    },
+                    {
+                        price: '26666666',
+                        date: '2021-03-26'
+                    },
+                    {
+                        price: '27777777',
+                        date: '2021-03-27'
+                    }]
+                }
+
+                expect(productsService.getNextToLastPriceAndDate(mockProduct))
+                    .toEqual({ previousPrice: "26666666", priceChangeDate: "2021-03-26" })
+            })
+
+            it('returns null if theres only one priceLog', () => {
+                const mockProduct = {
+                    priceLogs: [
+                        { id: 1, price: '21900', date: '2021-03-23' },
+                    ]
+                }
+
+                expect(productsService.getNextToLastPriceAndDate(mockProduct))
+                    .toEqual({ previousPrice: null, priceChangeDate: null })
+            })
+
+            it('returns null if theres more than one priceLog bug theres no change in price', () => {
+                const mockProduct = {
+                    priceLogs: [{
+                        price: '123',
+                        date: '2021-03-23'
+                    }, {
+                        price: '123',
+                        date: '2021-03-24'
+                    }]
+                }
+
+                expect(productsService.getNextToLastPriceAndDate(mockProduct))
+                    .toEqual({ previousPrice: null, priceChangeDate: null })
+            })
+        })
+
+        describe('calculateDiscount(currentPrice, previousPrice)', () => {
+            it('calculates correctly price raise', () => {
+                const currentPrice = 200, previousPrice = 100
+
+                expect(productsService.calculateDiscount(currentPrice, previousPrice)).toBe("+100%")
+            })
+
+            it('calculates correctly discount', () => {
+                const currentPrice = 200, previousPrice = 400
+
+                expect(productsService.calculateDiscount(currentPrice, previousPrice)).toBe("-50%")
+            })
+
+            it('result gets rounded', () => {
+                const currentPrice = 200, previousPrice = 300
+
+                expect(productsService.calculateDiscount(currentPrice, previousPrice)).toBe("-33%")
+            })
+
+            it('returnts null if theres no previous price', () => {
+                const currentPrice = 200, previousPrice = null
+
+                expect(productsService.calculateDiscount(currentPrice, previousPrice)).toBe(null)
+            })
+        })
+
+        describe('convPennyToZL(price)', () => {
+            it('correctly changes pennies to PLN (Polish Zloty)', () => {
+                expect(productsService.convPennyToZL("12345")).toEqual("123.45")
+
+            })
+
+            it('returns null if price is null', () => {
+                expect(productsService.convPennyToZL(null)).toEqual(null)
             })
         })
     })

@@ -11,6 +11,7 @@ import { PriceLogsModule } from 'src/price-logs/price-logs.module';
     PriceLogsModule
   ],
   controllers: [ProductsController],
-  providers: [ProductsService]
+  providers: [ProductsService],
+  exports: [ProductsService]
 })
-export class ProductsModule {}
+export class ProductsModule { }
